@@ -10,6 +10,7 @@ and it originates from [maskrcnn-benchmark](https://github.com/facebookresearch/
   <img src="https://user-images.githubusercontent.com/1381301/66535560-d3422200-eace-11e9-9123-5535d469db19.png"/>
 </div>
 
+Here is a custom version of detectron2.
 ### Updates
 * Forked from [facebookresearch/detectron2](https://github.com/facebookresearch/detectron2) (19/08/2020)
 
