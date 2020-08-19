@@ -18,6 +18,10 @@ Here is a custom version of detectron2.
 
 See [INSTALL.md](INSTALL.md).
 
+## Installation (win10)
+
+See [INSTALL_win10.md](INSTALL_win10.md).
+
 ## Citing Detectron2
 
 If you use Detectron2 in your research or wish to refer to the baseline results published in the [Model Zoo](MODEL_ZOO.md), please use the following BibTeX entry.
