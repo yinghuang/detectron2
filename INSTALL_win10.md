@@ -54,4 +54,3 @@ The fundamental solution is to run the code with proper C++ runtime.
 One way is to use `LD_PRELOAD=/path/to/libstdc++.so`.
 
 </details>
-
