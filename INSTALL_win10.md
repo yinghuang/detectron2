@@ -25,6 +25,7 @@ also installs detectron2 with a few simple commands.
 
 
 #### 2. 打开命令窗口安装pytorch(目前只测试过pytorch=1.5.1)(假设将这些安装到detectron2_custom环境下)
+
 		```
 		conda create -n detectron2_custom python=3.6
 		conda activate detectron2_custom
@@ -35,6 +36,7 @@ also installs detectron2 with a few simple commands.
 
 
 #### 3. (**本仓库已修改, 可跳过**)修改xxx\detectron2\detectron2\layers\csrc\cocoeval\cocoeval.cpp line 483
+
 		```
 		//localtime_r(&rawtime, &local_time); //报错, 未识别的标识符
 		localtime_s(&local_time, &rawtime);
@@ -45,12 +47,14 @@ also installs detectron2 with a few simple commands.
 
 
 #### 5. 在当前命令窗口激活VS生成工具(假设VS生成工具安装在默认路径)
+
 		```
 		call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
 		```
 
 
 #### 6. 切换到detectron2目录, 开始编译
+
 		```
 		cd xxx\detectron2
 		python setup.py build develop
@@ -60,6 +64,7 @@ also installs detectron2 with a few simple commands.
 
 
 #### 7. 安装其他需要的包
+
 		```
 		pip install opencv-python tqdm matplotlib fvcore cython cloudpickle mock tensorboard
 		```
@@ -68,6 +73,7 @@ also installs detectron2 with a few simple commands.
 
 
 #### 8. 测试安装成功
+
 		```
 		python
 		import detectron2
@@ -75,6 +81,7 @@ also installs detectron2 with a few simple commands.
 
 
 #### 9. 测试demo, 到 [detectron2 MODEL ZOO](https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md) 下载 [Faster R-CNN X101-FPN](https://dl.fbaipublicfiles.com/detectron2/COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x/139173657/model_final_68b088.pkl)模型权重, 假设放在目录xxx下
+
 		```
 		python demo/demo.py ^
 		--config-file configs/COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml ^
