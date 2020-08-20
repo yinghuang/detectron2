@@ -2,11 +2,9 @@
 output
 instant_test_output
 inference_test_output
-build
-detectron2.egg-info
 
 *.jpg
-#*.png
+*.png
 *.txt
 *.json
 *.diff
@@ -46,3 +44,9 @@ wheels/
 /datasets
 /projects/*/datasets
 /models
+
+
+build
+detectron2.egg-info
+!introduce_materials/*.png
+!demo/*.jpg
