@@ -21,7 +21,7 @@
   
   <img src="introduce_materials/cuda_version.png" width="800" >  
   
-  上图来自[cuda-toolkit-release-notes](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new)
+  上图来自[cuda-toolkit-release-notes](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new)  
   比如我的驱动版本是432.00, 最高只能安装CUDA 10.1, 不能安装CUDA10.2.89及以上版本
   
   
