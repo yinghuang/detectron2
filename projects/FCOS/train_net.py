@@ -3,15 +3,31 @@ FCOS Training Script.
 
 This script is a simplified version of the training script in detectron2/tools.
 """
+import logging
 import argparse
 import sys
 import os
+from collections import OrderedDict
 import shutil
+import torch
 
+import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
+from detectron2.data import MetadataCatalog
 from detectron2.config import get_cfg
-from detectron2.engine import DefaultTrainer, default_setup, launch
-from detectron2.evaluation import COCOEvaluator
+from detectron2.engine import DefaultTrainer, default_setup, hooks, launch
+from detectron2.evaluation import (
+    CityscapesInstanceEvaluator,
+    CityscapesSemSegEvaluator,
+    COCOEvaluator,
+    COCOPanopticEvaluator,
+    DatasetEvaluators,
+    LVISEvaluator,
+    PascalVOCDetectionEvaluator,
+    SemSegEvaluator,
+    verify_results,
+)
+from detectron2.modeling import GeneralizedRCNNWithTTA
 
 from fcos import add_fcos_config
 from dataset import register_dataset
@@ -43,7 +59,7 @@ Run on multiple machines:
     )
     # add for custom
     #==========
-    parser.add_argument('--dataset_dirname', type=str, default="")
+    parser.add_argument('--dataset_dir', type=str, default="")
     parser.add_argument('--dataset_settxt', type=str, default="train.txt")
     parser.add_argument('--class_names', type=str, default="hb") 
     parser.add_argument('--dataset_register_type', type=str, default="relative")  # absolute
@@ -165,12 +181,12 @@ def setup(args):
     
     # add for custom
     #==========
-    if len(args.dataset_dirname)>0:
+    if len(args.dataset_dir)>0:
         ## register dataset
         class_names = tuple(args.class_names.replace(" ","").split(","))
-        dataset_name = "pospal_{}_train".format("_".join(class_list))
+        dataset_name = "pospal_{}_train".format("_".join(class_names))
         absolute_path = args.dataset_register_type == "absolute"
-        register_dataset(dataset_name, args.dataset_dirname, args.dataest_settxt, class_names, absolute_path)
+        register_dataset(dataset_name, args.dataset_dir, args.dataset_settxt, class_names, absolute_path)
     
     add_fcos_config(cfg)
     #==========
@@ -180,7 +196,7 @@ def setup(args):
     
     # add for custom
     #==========
-    if len(args.dataset_dirname)>0:
+    if len(args.dataset_dir)>0:
         ## 使用自定义数据集
         cfg.DATASETS.TRAIN = (dataset_name,)
         cfg.DATASETS.TEST = () # 暂时不启用测试集

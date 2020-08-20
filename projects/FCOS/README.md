@@ -59,9 +59,33 @@ python train_net.py ^
 `log.txt`: 控制台输出日志  
 `metrics.json`: 训练输出日志  
 
-或者以上所有命令集合在`train_fcos.bat`, 可以直接双击执行
+或者以上所有命令集合在`train_fcos.bat`, 修改里面的Anaconda3路径后, 可以直接双击执行
 
 ### 图片推理demo
 
-模型下载放置完毕后, 直接双击执行`demo_inference_fcos.bat`
+模型下载放置完毕后, 修改里面的Anaconda3路径, 直接双击执行`demo_inference_fcos.bat`
+
+### 在自定义数据集上训练
+
+1.写好yaml配置文件
+
+2.执行
+```
+python train_net.py ^
+--config-file configs/fcos_R_50_FPN_develop.yaml ^
+--dataset_dir xxx ^
+--dataset_settxt xxx.txt ^
+--class_names xxx ^
+--num-gpus xxx
+```
+
+### Notes
+
+1. 暂不支持cfg.MODEL.FCOS.NORM_SYNC=True, 需要判断当前是否处于多GPU训练
+2. 
+
+
+
+
+
 
