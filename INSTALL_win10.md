@@ -55,7 +55,7 @@ call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliar
 cd xxx\detectron2
 python setup.py build develop
 ```
-最后会提示pycocotool安装失败, 这是因为官方的pycocotools不支持win10, 先不用管
+最后会提示pycocotools安装失败, 这是因为官方的pycocotools不支持win10, 先不用管
   
   
 **7. 安装其他需要的包**  
@@ -80,6 +80,10 @@ python demo/demo.py ^
 --input demo/coco_val2017_000000002153.jpg ^
 --opts MODEL.WEIGHTS xxx/faster_rcnn_X_101_32x8d_FPN_3x.pkl
 ```
+  
+  
+**10. (可选)安装pycocotools
+待更新
   
   
 **Note that**:
