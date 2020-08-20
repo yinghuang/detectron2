@@ -24,7 +24,7 @@ See [INSTALL_win10.md](INSTALL_win10.md).
 
 ## Changed files list
 
-See [CHANGED_FILES.md](CHANGED_FILES.md])
+Files chagned relative to official code. See [CHANGED_FILES.md](CHANGED_FILES.md])
 
 ## Citing Detectron2
 
