@@ -82,7 +82,7 @@ python demo/demo.py ^
 ```
   
   
-**10. (可选)安装pycocotools
+**10. (可选)安装pycocotools**
 待更新
   
   
