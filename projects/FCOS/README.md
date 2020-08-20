@@ -30,7 +30,7 @@ xxx:
             000000000xxx.jpg
             ...
     ...other datasets...
-```
+```  
 
    COCO数据集[主页](https://cocodataset.org/#download)  
    COCO 2017 annotations可以从这里下载[annotations_trainval2017.zip](http://images.cocodataset.org/annotations/annotations_trainval2017.zip)  
@@ -60,10 +60,9 @@ python train_net.py ^
 `log.txt`: 控制台输出日志  
 `metrics.json`: 训练输出日志  
 
-
-或者以上所有命令集合在`train_fcos.bat`, 可以直接双击执行
+   或者以上所有命令集合在`train_fcos.bat`, 可以直接双击执行
 
 ### 图片推理demo
 
-与训练模型下载后, 直接双击执行`demo_inference_fcos.bat`
+模型下载放置完毕后, 直接双击执行`demo_inference_fcos.bat`
 
