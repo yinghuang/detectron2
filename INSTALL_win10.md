@@ -14,10 +14,12 @@ also installs detectron2 with a few simple commands.
 
 ### Build Detectron2 from Source
 **0. 安装NVIDIA显卡驱动, 安装CUDA(因为底层需要用到c++编译deformable conv层)**  
+  
   **注意: **由于后面用conda安装pytorch会安装conda的cudatoolk包, 需要确保cudatoolk和本地的CUDA版本一致
   
   
 **1. 根据NVIDIA显卡驱动确定自己可以安装的CUDA版本以及对于的pytorch版本**  
+  
   <img src="introduce_materials/cuda_version.png" width="800" >  
   (上图来自 [What's New in CUDA 11.0 GA](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new))  
   比如我的驱动版本是432.00, 最高只能安装CUDA 10.1, 不能安装CUDA10.2.89及以上版本
