@@ -16,8 +16,8 @@ also installs detectron2 with a few simple commands.
 0. 安装NVIDIA显卡驱动, 安装CUDA(因为底层需要用到c++编译deformable conv层), 注意!!!并且由于后面用conda安装pytorch会安装conda的cudatoolk包, 需要确保cudatoolk和本地的CUDA版本一致
 
 1. 根据NVIDIA显卡驱动确定自己可以安装的CUDA版本以及对于的pytorch版本
-   <img src="introduce_materials/cuda_version.png" width="800" > 
-   (上图来自 [What's New in CUDA 11.0 GA](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new)) 
+   <img src="introduce_materials/cuda_version.png" width="800" >  
+   (上图来自 [What's New in CUDA 11.0 GA](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new))  
    比如我的驱动版本是432.00, 最高只能安装CUDA 10.1, 不能安装CUDA10.2.89及以上版本
 
 
@@ -26,7 +26,7 @@ also installs detectron2 with a few simple commands.
 conda create -n detectron2_custom python=3.6
 conda activate detectron2_custom
 conda install pytorch=1.5 torchvision cudatoolkit=10.1 -c pytorch
-```
+```  
    (用conda安装时, 有些版本pytorch只能在特定版本的cudatoolkit下安装)
 
 
@@ -50,14 +50,14 @@ call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliar
 ```
 cd xxx\detectron2
 python setup.py build develop
-```
+```  
    最后会提示pycocotool安装失败, 这是因为官方的pycocotools不支持win10, 先不用管
 
 
 7. 安装其他需要的包
 ```
 pip install opencv-python tqdm matplotlib fvcore cython cloudpickle mock tensorboard
-```
+```  
    如果出现`ERROR: Could not install packages due to an EnvironmentError: [WinError 5] 拒绝访问。`错误, 用管理员权限打开一个命令窗口来安装
 
 
