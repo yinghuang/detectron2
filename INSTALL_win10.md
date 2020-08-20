@@ -4,7 +4,7 @@
 ### Requirements
 
 - WINDOWS10 with Python == 3.6
-- PyTorch == 1.5.1 and [torchvision](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new) that matches the PyTorch installation.
+- PyTorch == 1.5.1 and [torchvision](https://github.com/pytorch/vision/) that matches the PyTorch installation.
   You can install them together at [pytorch.org](https://pytorch.org) to make sure of this
 - OpenCV is optional and needed by demo and visualization
 - 详情如下
@@ -20,8 +20,7 @@
 **1. 根据NVIDIA显卡驱动确定自己可以安装的CUDA版本以及对于的pytorch版本**  
   
   <img src="introduce_materials/cuda_version.png" width="800" >  
-  上图来自 [cuda-toolkit-release-notes](https://github.com/pytorch/vision/)  
-  
+  上图来自[cuda toolkit release notes](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new)  
   比如我的驱动版本是432.00, 最高只能安装CUDA 10.1, 不能安装CUDA10.2.89及以上版本
   
   
