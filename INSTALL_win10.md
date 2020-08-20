@@ -17,20 +17,18 @@ also installs detectron2 with a few simple commands.
   **注意**并且由于后面用conda安装pytorch会安装conda的cudatoolk包, 需要确保cudatoolk和本地的CUDA版本一致
 
 **1. 根据NVIDIA显卡驱动确定自己可以安装的CUDA版本以及对于的pytorch版本**  
-	<img src="introduce_materials/cuda_version.png" width="800" >  
-	(上图来自 [What's New in CUDA 11.0 GA](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new))  
-	比如我的驱动版本是432.00, 最高只能安装CUDA 10.1, 不能安装CUDA10.2.89及以上版本
+  <img src="introduce_materials/cuda_version.png" width="800" >  
+  (上图来自 [What's New in CUDA 11.0 GA](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new))  
+  比如我的驱动版本是432.00, 最高只能安装CUDA 10.1, 不能安装CUDA10.2.89及以上版本
 
 
-**2. 打开命令窗口安装pytorch(目前只测试过pytorch=1.5.1)(假设将这些安装到detectron2_custom环境下)**
-
-		```
-		conda create -n detectron2_custom python=3.6
-		conda activate detectron2_custom
-		conda install pytorch=1.5 torchvision cudatoolkit=10.1 -c pytorch
-		```
-
-		(用conda安装时, 有些版本pytorch只能在特定版本的cudatoolkit下安装)
+**2. 打开命令窗口安装pytorch(目前只测试过pytorch=1.5.1)(假设将这些安装到detectron2_custom环境下)**  
+```
+conda create -n detectron2_custom python=3.6
+conda activate detectron2_custom
+conda install pytorch=1.5 torchvision cudatoolkit=10.1 -c pytorch
+```  
+(用conda安装时, 有些版本pytorch只能在特定版本的cudatoolkit下安装)
 
 
 **3. (**本仓库已修改, 可跳过**)修改xxx\detectron2\detectron2\layers\csrc\cocoeval\cocoeval.cpp line 483**
