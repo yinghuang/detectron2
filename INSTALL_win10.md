@@ -20,7 +20,7 @@
 **1. 根据NVIDIA显卡驱动确定自己可以安装的CUDA版本以及对于的pytorch版本**  
   
   <img src="introduce_materials/cuda_version.png" width="800" >  
-  上图来自 [cuda-toolkit-release-notes](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-whats-new)  
+  上图来自 [cuda-toolkit-release-notes](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html)  
   
   比如我的驱动版本是432.00, 最高只能安装CUDA 10.1, 不能安装CUDA10.2.89及以上版本
   
@@ -41,7 +41,7 @@ localtime_s(&local_time, &rawtime);
 ```
   
   
-**4. 去(https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools/)下载VS生成工具, 安装Visual Stutio生成工具2019**  
+**4. 下载[VS生成工具](https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools/), 安装Visual Stutio生成工具2019**  
   
   
 **5. 在当前命令窗口激活VS生成工具(假设VS生成工具安装在默认路径)**  
@@ -72,7 +72,7 @@ import detectron2
 ```
   
   
-**9. 测试demo, 到 [detectron2 MODEL ZOO](https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md) 下载 [Faster R-CNN X101-FPN](https://dl.fbaipublicfiles.com/detectron2/COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x/139173657/model_final_68b088.pkl)模型权重, 假设放在目录xxx下**  
+**9. 测试demo, 到[detectron2 MODEL ZOO](https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md) 下载 [Faster R-CNN X101-FPN](https://dl.fbaipublicfiles.com/detectron2/COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x/139173657/model_final_68b088.pkl)模型权重, 假设放在目录xxx下**  
 
 ```
 python demo/demo.py ^
