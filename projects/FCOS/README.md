@@ -1,7 +1,10 @@
 ## FCOS基于Detectron2的实现
+
+[FCOS: Fully Convolutional One-Stage Object Detection](https://arxiv.org/abs/1904.01355), [official code](https://github.com/tianzhi0549/FCOS)  
+
 代码参考[BorderDet](https://github.com/Megvii-BaseDetection/BorderDet/tree/master/playground/detection/coco/fcos/fcos.res50.fpn.coco.800size.1x),
-[fcos.py](https://github.com/Megvii-BaseDetection/BorderDet/blob/master/cvpods/modeling/meta_arch/fcos.py)  
-预训练模型在[这里](https://drive.google.com/file/d/1hcDobxvqolMwqj20BEAPikSMcz4NYZRx/view)
+[fcos.py](https://github.com/Megvii-BaseDetection/BorderDet/blob/master/cvpods/modeling/meta_arch/fcos.py)
+[预训练模型](https://drive.google.com/file/d/1hcDobxvqolMwqj20BEAPikSMcz4NYZRx/view)
 
 
 ### 在COCO 2017数据集上训练(带测试)demo
@@ -28,9 +31,10 @@ xxx:
             ...
     ...other datasets...
 ```
-COCO数据集[主页](https://cocodataset.org/#download)  
-COCO 2017 annotations可以从这里下载[annotations_trainval2017.zip](http://images.cocodataset.org/annotations/annotations_trainval2017.zip)  
-COCO 2017 images可以从这里下载[train2017.zip](http://images.cocodataset.org/zips/train2017.zip), [val2017](http://images.cocodataset.org/zips/val2017.zip)  
+
+   COCO数据集[主页](https://cocodataset.org/#download)  
+   COCO 2017 annotations可以从这里下载[annotations_trainval2017.zip](http://images.cocodataset.org/annotations/annotations_trainval2017.zip)  
+   COCO 2017 images可以从这里下载[train2017.zip](http://images.cocodataset.org/zips/train2017.zip), [val2017](http://images.cocodataset.org/zips/val2017.zip)  
 
 
 2. 设置数据集根目录环境变量(detectron2在导入时会自动注册COCO这些预设的数据集, 而数据集的根目录是根据环境变量`DETECTRON2_DATASETS`来指定的. 参考`detectron2/detectron2/data/datasets/__init__.py`和`detectron2/detectron2/data/datasets/builtin.py`)

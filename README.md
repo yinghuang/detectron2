@@ -13,7 +13,7 @@ and it originates from [maskrcnn-benchmark](https://github.com/facebookresearch/
 Here is a custom version of detectron2.
 ### Updates
 * Forked from [facebookresearch/detectron2](https://github.com/facebookresearch/detectron2) (19/08/2020)
-* Add FCOS projects [here](projects/FCOS) (20/08/2020)
+* Add [FCOS](https://arxiv.org/abs/1904.01355) project (20/08/2020)
 
 ## Installation (official)
 
@@ -25,7 +25,7 @@ See [INSTALL_win10.md](INSTALL_win10.md).
 
 ## Highlights
 
-1. Support [FCOS](projects/FCOS)
+1. Support [FCOS](https://arxiv.org/abs/1904.01355), [for more](projects/FCOS)
 
 
 ## Changed files list
