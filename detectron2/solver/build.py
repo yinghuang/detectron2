@@ -160,6 +160,7 @@ def build_lr_scheduler(
             warmup_factor=cfg.SOLVER.WARMUP_FACTOR,
             warmup_iters=cfg.SOLVER.WARMUP_ITERS,
             warmup_method=cfg.SOLVER.WARMUP_METHOD,
+            lr_min=cfg.SOLVER.LR_MIN,
         )
     else:
         raise ValueError("Unknown LR scheduler: {}".format(name))

@@ -58,11 +58,13 @@ class WarmupCosineLR(torch.optim.lr_scheduler._LRScheduler):
         warmup_iters: int = 1000,
         warmup_method: str = "linear",
         last_epoch: int = -1,
+        lr_min: float = 0,
     ):
         self.max_iters = max_iters
         self.warmup_factor = warmup_factor
         self.warmup_iters = warmup_iters
         self.warmup_method = warmup_method
+        self.lr_min = lr_min
         super().__init__(optimizer, last_epoch)
 
     def get_lr(self) -> List[float]:
@@ -75,7 +77,9 @@ class WarmupCosineLR(torch.optim.lr_scheduler._LRScheduler):
         # instead of at 0. In the case that warmup_iters << max_iters the two are
         # very close to each other.
         return [
-            base_lr
+            self.lr_min +
+            (base_lr - self.lr_min)
+#            base_lr
             * warmup_factor
             * 0.5
             * (1.0 + math.cos(math.pi * self.last_epoch / self.max_iters))
