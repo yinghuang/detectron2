@@ -25,7 +25,7 @@ See [INSTALL_win10.md](INSTALL_win10.md).
 
 ## Highlights
 
-1. Support [FCOS](https://arxiv.org/abs/1904.01355), [for more](projects/FCOS)
+1. Support [FCOS](https://arxiv.org/abs/1904.01355). [For more](projects/FCOS)
 
 
 ## Changed files list

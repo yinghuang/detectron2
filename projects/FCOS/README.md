@@ -1,6 +1,6 @@
 ## FCOS基于Detectron2的实现
 
-[FCOS: Fully Convolutional One-Stage Object Detection](https://arxiv.org/abs/1904.01355), [official code](https://github.com/tianzhi0549/FCOS)  
+**FCOS: Fully Convolutional One-Stage Object Detection** [paper](https://arxiv.org/abs/1904.01355), [official code](https://github.com/tianzhi0549/FCOS)  
 
 代码参考[BorderDet](https://github.com/Megvii-BaseDetection/BorderDet/tree/master/playground/detection/coco/fcos/fcos.res50.fpn.coco.800size.1x),
 [fcos.py](https://github.com/Megvii-BaseDetection/BorderDet/blob/master/cvpods/modeling/meta_arch/fcos.py)
@@ -30,8 +30,8 @@ xxx:
             000000000xxx.jpg
             ...
     ...other datasets...
-```  
-
+```
+  
    COCO数据集[主页](https://cocodataset.org/#download)  
    COCO 2017 annotations可以从这里下载[annotations_trainval2017.zip](http://images.cocodataset.org/annotations/annotations_trainval2017.zip)  
    COCO 2017 images可以从这里下载[train2017.zip](http://images.cocodataset.org/zips/train2017.zip), [val2017](http://images.cocodataset.org/zips/val2017.zip)  
@@ -58,8 +58,8 @@ python train_net.py ^
 `config.yaml`: 一份完整的config(注意里面的格式变了)  
 `config_my.yaml`: 一份来自`--config-file`的拷贝文件  
 `log.txt`: 控制台输出日志  
-`metrics.json`: 训练输出日志  
-
+`metrics.json`: 训练输出日志
+  
    或者以上所有命令集合在`train_fcos.bat`, 可以直接双击执行
 
 ### 图片推理demo
