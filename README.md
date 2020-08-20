@@ -22,6 +22,10 @@ See [INSTALL.md](INSTALL.md).
 
 See [INSTALL_win10.md](INSTALL_win10.md).
 
+## Changed files list
+
+See [CHANGED_FILES.md](CHANGED_FILES.md])
+
 ## Citing Detectron2
 
 If you use Detectron2 in your research or wish to refer to the baseline results published in the [Model Zoo](MODEL_ZOO.md), please use the following BibTeX entry.
