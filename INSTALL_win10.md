@@ -1,18 +1,17 @@
 ## Installation
 
-Our [Colab Notebook](https://colab.research.google.com/drive/16jcaJoc6bCFAQ96jDe2HwtXj7BMD_-m5)
-has step-by-step instructions that install detectron2.
-The [Dockerfile](docker)
-also installs detectron2 with a few simple commands.
 
 ### Requirements
+
 - WINDOWS10 with Python == 3.6
 - PyTorch == 1.5.1 and [torchvision](https://github.com/pytorch/vision/) that matches the PyTorch installation.
   You can install them together at [pytorch.org](https://pytorch.org) to make sure of this
 - OpenCV is optional and needed by demo and visualization
+- 详情如下
 
 
 ### Build Detectron2 from Source
+
 **0. 安装NVIDIA显卡驱动, 安装CUDA(因为底层需要用到c++编译deformable conv层)**  
   
   **注意: **由于后面用conda安装pytorch会安装conda的cudatoolk包, 需要确保cudatoolk和本地的CUDA版本一致
