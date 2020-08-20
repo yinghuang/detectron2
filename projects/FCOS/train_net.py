@@ -62,7 +62,7 @@ Run on multiple machines:
     parser.add_argument('--dataset_dir', type=str, default="")
     parser.add_argument('--dataset_settxt', type=str, default="train.txt")
     parser.add_argument('--class_names', type=str, default="hb") 
-    parser.add_argument('--dataset_register_type', type=str, default="relative")  # absolute
+    parser.add_argument('--dataset_register_type', type=str, default="")  # 数据集文件路径集合.txt中使用的是absolute路径还是文件名
     #==========
     
     parser.add_argument("--config-file", default="", metavar="FILE", help="path to config file")
