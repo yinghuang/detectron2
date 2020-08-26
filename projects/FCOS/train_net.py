@@ -13,7 +13,13 @@ import torch
 
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
-from detectron2.data import MetadataCatalog
+from detectron2.data import (
+    MetadataCatalog,
+    build_detection_test_loader,
+    build_detection_train_loader,
+    DatasetMapper
+)
+import detectron2.data.transforms as T
 from detectron2.config import get_cfg
 from detectron2.engine import DefaultTrainer, default_setup, hooks, launch
 from detectron2.evaluation import (
@@ -61,8 +67,11 @@ Run on multiple machines:
     #==========
     parser.add_argument('--dataset_dir', type=str, default="")
     parser.add_argument('--dataset_settxt', type=str, default="train.txt")
-    parser.add_argument('--class_names', type=str, default="hb") 
-    parser.add_argument('--dataset_register_type', type=str, default="")  # 数据集文件路径集合.txt中使用的是absolute路径还是文件名
+    parser.add_argument('--class_names', type=str, default="") 
+    parser.add_argument('--dataset_register_type', type=str, default="filename")  # 数据集文件路径集合.txt中使用的是absolute路径还是文件名
+    
+    parser.add_argument('--dataset_dir_val', type=str, default="")
+    parser.add_argument('--dataset_settxt_val', type=str, default="val.txt")
     #==========
     
     parser.add_argument("--config-file", default="", metavar="FILE", help="path to config file")
@@ -172,6 +181,25 @@ class Trainer(DefaultTrainer):
         res = OrderedDict({k + "_TTA": v for k, v in res.items()})
         return res
 
+    @classmethod # 自定义augmentation, https://detectron2.readthedocs.io/tutorials/data_loading.html#write-a-custom-dataloader
+    def build_train_loader(cls, cfg):
+        """
+        Returns:
+            iterable
+
+        It now calls :func:`detectron2.data.build_detection_train_loader`.
+        Overwrite it if you'd like a different data loader.
+        """
+        logger = logging.getLogger("detectron2.trainer.build_train_loader")
+        mapper = DatasetMapper(cfg, is_train=True)
+        # 默认有 T.ResizeShortestEdge(min_size, max_size, sample_style)
+        # 并且is_train=True时, 有augmentation.append(T.RandomFlip())
+        mapper.augmentations = [mapper.augmentations[0]]
+        mapper.augmentations.append(T.RandomFlip(prob=0.5, horizontal=False, vertical=True))
+        mapper.augmentations.append(T.RandomFlip(prob=0.5, horizontal=True, vertical=False))
+        logger.info("Augmentations used in training changed to:{}\n".format(mapper.augmentations))
+        
+        return build_detection_train_loader(cfg, mapper=mapper)
 
 def setup(args):
     """
@@ -180,13 +208,29 @@ def setup(args):
     cfg = get_cfg()
     
     # add for custom
+    evaluator_type = "coco"
     #==========
     if len(args.dataset_dir)>0:
         ## register dataset
         class_names = tuple(args.class_names.replace(" ","").split(","))
-        dataset_name = "pospal_{}_train".format("_".join(class_names))
+        dataset_name_train = "my_custom_train"
         absolute_path = args.dataset_register_type == "absolute"
-        register_dataset(dataset_name, args.dataset_dir, args.dataset_settxt, class_names, absolute_path)
+        register_dataset(dataset_name_train,
+                         args.dataset_dir,
+                         args.dataset_settxt,
+                         class_names,
+                         absolute_path,
+                         evaluator_type)
+    if len(args.dataset_dir_val)>0: # 有验证集
+        dataset_name_val = "my_custom_val"
+        register_dataset(dataset_name_val,
+                         args.dataset_dir_val,
+                         args.dataset_settxt_val,
+                         class_names,
+                         absolute_path,
+                         evaluator_type)
+            
+        
     
     add_fcos_config(cfg)
     #==========
@@ -197,9 +241,11 @@ def setup(args):
     # add for custom
     #==========
     if len(args.dataset_dir)>0:
-        ## 使用自定义数据集
-        cfg.DATASETS.TRAIN = (dataset_name,)
-        cfg.DATASETS.TEST = () # 暂时不启用测试集
+        ## 使用自定义数据集训练
+        cfg.DATASETS.TRAIN = (dataset_name_train,)
+    if len(args.dataset_dir_val)>0:
+        ## 使用自定义数据集测试
+        cfg.DATASETS.TEST = (dataset_name_val,)
     
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     shutil.copy(args.config_file, "{}/{}".format(cfg.OUTPUT_DIR, "config_my.yaml")) # 保存训练参数

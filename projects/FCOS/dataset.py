@@ -1,6 +1,7 @@
 import os
+import logging
 import pickle
-import datetime
+from datetime import datetime
 import numpy as np
 
 import xml.etree.ElementTree as ET
@@ -11,6 +12,7 @@ from fvcore.common.file_io import PathManager
 from detectron2.structures import BoxMode
 from detectron2.data import DatasetCatalog, MetadataCatalog
 
+logger = logging.getLogger("dataset.py")
 
 def save_obj(obj, name):
     with open(name, 'wb') as f:
@@ -83,6 +85,9 @@ def parse_batch(args):
         # In coordinate space this is represented by (xmin=0, xmax=W)
         bbox[0] -= 1.0
         bbox[1] -= 1.0
+        if cls not in class_names: # hb测试集类别名字比较乱("001"?), 但是只有一个
+            cls = class_names[0]
+            logger.info("xml file: {}, class {} not in class_names, change to class_names[0]: {}".format(anno_file, cls, class_names[0]))
         instances.append(
             {"category_id": class_names.index(cls), "bbox": bbox, "bbox_mode": BoxMode.XYXY_ABS}
         )
@@ -182,7 +187,7 @@ def load_instances(dirname, settxt, class_names, absolute=False, threads=10, poo
     return dicts
 
 
-def register_dataset(name, dirname, settxt, class_names, absolute, threads=10, pool_batch_size=1000):
+def register_dataset(name, dirname, settxt, class_names, absolute, evaluator_type, threads=10, pool_batch_size=1000):
     """
     Args:
         name (str): 数据集名称
@@ -193,5 +198,7 @@ def register_dataset(name, dirname, settxt, class_names, absolute, threads=10, p
     """
     DatasetCatalog.register(name, lambda: load_instances(dirname, settxt, class_names, absolute, threads, pool_batch_size))
     MetadataCatalog.get(name).set(
-        thing_classes=list(class_names), dirname=dirname
+        thing_classes=list(class_names),
+        dirname=dirname,
+        evaluator_type=evaluator_type
     )
