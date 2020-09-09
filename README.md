@@ -29,6 +29,8 @@ See [INSTALL_win10.md](INSTALL_win10.md).
 
 1. Support [FCOS](https://arxiv.org/abs/1904.01355). [For more](projects/FCOS)
 
+## Future
+1. Add support of tfrecord for dataloader.
 
 ## Changed files list
 
