@@ -181,25 +181,25 @@ class Trainer(DefaultTrainer):
         res = OrderedDict({k + "_TTA": v for k, v in res.items()})
         return res
 
-    @classmethod # 自定义augmentation, https://detectron2.readthedocs.io/tutorials/data_loading.html#write-a-custom-dataloader
-    def build_train_loader(cls, cfg):
-        """
-        Returns:
-            iterable
-
-        It now calls :func:`detectron2.data.build_detection_train_loader`.
-        Overwrite it if you'd like a different data loader.
-        """
-        logger = logging.getLogger("detectron2.trainer.build_train_loader")
-        mapper = DatasetMapper(cfg, is_train=True)
-        # 默认有 T.ResizeShortestEdge(min_size, max_size, sample_style)
-        # 并且is_train=True时, 有augmentation.append(T.RandomFlip())
-        mapper.augmentations = [mapper.augmentations[0]]
-        mapper.augmentations.append(T.RandomFlip(prob=0.5, horizontal=False, vertical=True))
-        mapper.augmentations.append(T.RandomFlip(prob=0.5, horizontal=True, vertical=False))
-        logger.info("Augmentations used in training changed to:{}\n".format(mapper.augmentations))
-        
-        return build_detection_train_loader(cfg, mapper=mapper)
+#    @classmethod # 自定义augmentation, https://detectron2.readthedocs.io/tutorials/data_loading.html#write-a-custom-dataloader
+#    def build_train_loader(cls, cfg):
+#        """
+#        Returns:
+#            iterable
+#
+#        It now calls :func:`detectron2.data.build_detection_train_loader`.
+#        Overwrite it if you'd like a different data loader.
+#        """
+#        logger = logging.getLogger("detectron2.trainer.build_train_loader")
+#        mapper = DatasetMapper(cfg, is_train=True)
+#        # 默认有 T.ResizeShortestEdge(min_size, max_size, sample_style)
+#        # 并且is_train=True时, 有augmentation.append(T.RandomFlip())
+#        mapper.augmentations = [mapper.augmentations[0]]
+#        mapper.augmentations.append(T.RandomFlip(prob=0.5, horizontal=False, vertical=True))
+#        mapper.augmentations.append(T.RandomFlip(prob=0.5, horizontal=True, vertical=False))
+#        logger.info("Augmentations used in training changed to:{}\n".format(mapper.augmentations))
+#        
+#        return build_detection_train_loader(cfg, mapper=mapper)
 
 def setup(args):
     """
