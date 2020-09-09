@@ -26,6 +26,8 @@ def add_fcos_config(cfg):
     
     _C.MODEL.FCOS.NORM_REG_TARGETS = False
     
+    _C.MODEL.FCOS.HEAD_NORM = "GN" # (GN, BN) GN不支持rknn
+    
     _C.MODEL.FCOS.SCORE_THRESH_TEST = 0.05
     
     _C.MODEL.FCOS.TOPK_CANDIDATES_TEST = 1000

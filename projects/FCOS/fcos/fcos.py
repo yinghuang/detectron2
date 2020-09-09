@@ -584,6 +584,15 @@ class FCOSHead(nn.Module):
         self.fpn_strides = cfg.MODEL.FCOS.FPN_STRIDES
         self.centerness_on_reg = cfg.MODEL.FCOS.CENTERNESS_ON_REG
         self.norm_reg_targets = cfg.MODEL.FCOS.NORM_REG_TARGETS
+        
+        self.norm = cfg.MODEL.FCOS.HEAD_NORM
+        if self.norm == "GN":
+            norm_func = lambda in_channels:nn.GroupNorm(32, in_channels)
+        elif self.norm == "BN":
+            norm_func = lambda in_channels:nn.BatchNorm2d(in_channels)
+        else:
+            raise ValueError("unknown norm type!")
+            
         # fmt: on
         cls_subnet = []
         bbox_subnet = []
@@ -594,7 +603,7 @@ class FCOSHead(nn.Module):
                           kernel_size=3,
                           stride=1,
                           padding=1))
-            cls_subnet.append(nn.GroupNorm(32, in_channels))
+            cls_subnet.append(norm_func(in_channels))
             cls_subnet.append(nn.ReLU())
             bbox_subnet.append(
                 nn.Conv2d(in_channels,
@@ -602,7 +611,7 @@ class FCOSHead(nn.Module):
                           kernel_size=3,
                           stride=1,
                           padding=1))
-            bbox_subnet.append(nn.GroupNorm(32, in_channels))
+            bbox_subnet.append(norm_func(in_channels))
             bbox_subnet.append(nn.ReLU())
 
         self.cls_subnet = nn.Sequential(*cls_subnet)
