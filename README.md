@@ -10,13 +10,29 @@ and it originates from [maskrcnn-benchmark](https://github.com/facebookresearch/
   <img src="https://user-images.githubusercontent.com/1381301/66535560-d3422200-eace-11e9-9123-5535d469db19.png"/>
 </div>
 
-Here is a custom version of detectron2.
+Here is a custom version of detectron2 (based on 0.2.1).
+
 ### Updates
 * Forked from [facebookresearch/detectron2](https://github.com/facebookresearch/detectron2) (19/08/2020)
+* Add [FCOS](https://arxiv.org/abs/1904.01355) project, add `cfg.SOLVER.LR_MIN` for `WarmupCosineLR` (20/08/2020)
+
 
 ## Installation (official)
 
 See [INSTALL.md](INSTALL.md).
+
+## Installation (win10)
+
+See [INSTALL_win10.md](INSTALL_win10.md).
+
+## Highlights
+
+1. Support [FCOS](https://arxiv.org/abs/1904.01355). [For more](projects/FCOS)
+
+
+## Changed files list
+
+Files chagned relative to official code. See [CHANGED_FILES.md](CHANGED_FILES.md)
 
 ## Citing Detectron2
 
