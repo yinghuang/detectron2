@@ -35,6 +35,7 @@ def parse_batch(args):
         class_names = args[5]
     else:
         image_path = args[1]
+        class_names = args[3]
     """
     Args:
         dicts (list from Manager): 多线程共享的list类型
@@ -50,6 +51,7 @@ def parse_batch(args):
         jpeg_file = os.path.join(images_dir, fileid + ".jpg")
     else:
         image_path = image_path.replace("\\", "/")
+        images_dir = os.path.dirname(image_path)
         # 去后缀的文件名
         fileid = os.path.basename(image_path)
         fileid = fileid.replace(".jpg", "").replace(".jpeg", "")
@@ -59,9 +61,16 @@ def parse_batch(args):
         
         jpeg_file = image_path
         
-    with PathManager.open(anno_file) as f:
-        tree = ET.parse(f)
-
+    try:
+        with PathManager.open(anno_file) as f:
+            tree = ET.parse(f)
+    except Exception as e:
+        print(e)
+        print(anno_file)
+        print(images_dir)
+        print(image_path)
+        raise ValueError
+        
     r = {
         "file_name": jpeg_file,
         "image_id": fileid,
@@ -141,8 +150,10 @@ def load_instances(dirname, settxt, class_names, absolute=False, threads=10, poo
     
     begin = datetime.now()
     print("building and loading instances... please wait")
-    with PathManager.open(os.path.join(dirname, settxt)) as f:
-        fileids = np.loadtxt(f, dtype=np.str)
+#    with PathManager.open(os.path.join(dirname, settxt)) as f:
+#        filepaths = np.loadtxt(f, dtype=np.str)
+    with open(os.path.join(dirname, settxt)) as f:
+        filepaths = [line.strip() for line in f.readlines() if line!="\n"]
     
     if not absolute:
         # 标签文件目录
@@ -154,17 +165,18 @@ def load_instances(dirname, settxt, class_names, absolute=False, threads=10, poo
     
     args_list = []
     pool = Pool(threads)
-    length = len(fileids)
-    for i, fileid in enumerate(fileids):
+    length = len(filepaths)
+    progress_unit = int(0.01 * length) if length>10000 else int(0.1 * length)
+    for i, filepath in enumerate(filepaths):
         progress = i+1
-        if progress % (0.1*length) ==0:
-            print("{}%...".format(progress/length*100))
+        if progress % progress_unit ==0:
+            print("{:.1f}%...".format(progress/length*100))
             
         if not absolute: # settxt里给的是图片文件名
-            args_list.append([dicts, fileid, absolute, images_dir, annotation_dir, class_names])
+            args_list.append([dicts, filepath, absolute, images_dir, annotation_dir, class_names])
         else: # settxt里给的是图片文件绝对路径
-            image_path = fileid
-            args_list.append([dicts, image_path, absolute])
+            image_path = filepath
+            args_list.append([dicts, image_path, absolute, class_names])
         
         if len(args_list) == pool_batch_size: # 每次达到batch_size后就使用pool多线程处理, 该batch处理完毕后才继续
             _ = pool.map(parse_batch, args_list)
