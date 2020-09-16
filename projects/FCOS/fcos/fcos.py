@@ -233,6 +233,8 @@ class FCOS(nn.Module):
             dict[str: Tensor]:
                 mapping from a named loss to a tensor storing the loss. Used during training only.
         """
+        # Convert imgs have different shape in batched_inputs
+        # to that have same shape and into one tensor: [n, c, h, w]
         images = self.preprocess_image(batched_inputs)
         if "instances" in batched_inputs[0]:
             gt_instances = [
@@ -248,7 +250,8 @@ class FCOS(nn.Module):
             ]
         else:
             gt_instances = None
-
+        
+        # images.tensor: [n, c, h, w]
         features = self.backbone(images.tensor)
         features = [features[f] for f in self.in_features]
         box_cls, box_delta, box_center = self.head(features)
@@ -564,6 +567,12 @@ class FCOS(nn.Module):
         """
         images = [x["image"].to(self.device) for x in batched_inputs]
         images = [self.normalizer(x) for x in images]
+        # different shape(e.g. [c, 480, 480], [c, 512, 512]) in images 
+        # to same shape [n, c, max_size_h, max_size_w] (e.g. [2, c, 512, 512])
+        # and max_size_h and max_size_w should be divided with no remainde by size_divisibility(整除)
+        # e.g. if 600%32!==0, should be 608
+        # If `size_divisibility > 0`, add padding to ensure
+        # the common height and width is divisible by `size_divisibility`.
         images = ImageList.from_tensors(images,
                                         self.backbone.size_divisibility)
         return images

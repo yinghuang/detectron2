@@ -167,6 +167,7 @@ def load_instances(dirname, settxt, class_names, absolute=False, threads=10, poo
     pool = Pool(threads)
     length = len(filepaths)
     progress_unit = int(0.01 * length) if length>10000 else int(0.1 * length)
+    progress_unit = progress_unit if progress_unit >= 1 else 1
     for i, filepath in enumerate(filepaths):
         progress = i+1
         if progress % progress_unit ==0:
