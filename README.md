@@ -27,10 +27,12 @@ See [INSTALL_win10.md](INSTALL_win10.md).
 
 ## Highlights
 
-1. Support [FCOS](https://arxiv.org/abs/1904.01355). [For more](projects/FCOS)
+1. Support [FCOS](https://arxiv.org/abs/1904.01355). [For more](projects/FCOS/fcos)
+2. Support [Centernet](https://arxiv.org/abs/1904.07850) under building... [For more](projects/FCOS/centernet) 
 
 ## Future
 1. Add support of tfrecord for dataloader.
+2. Add multiple data augmentation, e.g. mosaic, label smooth....
 
 ## Changed files list
 
