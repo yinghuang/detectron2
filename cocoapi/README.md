@@ -1,6 +1,7 @@
 
 # 直接看下图安装
   <img src="install.png" width="800" >  
+  
   上图来自[这里](https://www.cnblogs.com/wildgoose/p/12905200.html)
 
 # 以下可以忽略
