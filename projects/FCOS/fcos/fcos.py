@@ -207,6 +207,8 @@ class FCOS(nn.Module):
         # Matching and loss
         self.shift2box_transform = Shift2BoxTransform(
             weights=cfg.MODEL.FCOS.BBOX_REG_WEIGHTS)
+        
+        # 分配box到特定level的feature map上
         # 限制回归范围.  mi-1<max(delta)<mi不满足的, 不进行box reg
         self.object_sizes_of_interest = cfg.MODEL.FCOS.OBJECT_SIZES_OF_INTEREST
         self.norm_sync = cfg.MODEL.FCOS.NORM_SYNC

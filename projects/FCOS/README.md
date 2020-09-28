@@ -84,6 +84,12 @@ python train_net.py ^
 1. 暂不支持cfg.MODEL.FCOS.NORM_SYNC=True, 需要判断当前是否处于多GPU训练
 2. 
 
+### Detectron2 理解
+1. `cfg.MIN_SIZE_TRAIN`和`cfg.MAX_SIZE_TRAIN`, 可以实现多尺度训练. 对batch中每张图片都进行keep ratio random resize, 
+    但是最后给模型forward的batch中每个图片的shape是一样的, 具体在meta_arch的preprocess_image中, 
+    使用batch中最大的长和宽定义了一个tensor, 每个图片分别放上去, size不够的就在右边和下边pad, 默认填充0像素值.
+
+
 
 
 

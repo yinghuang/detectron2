@@ -36,6 +36,7 @@ from detectron2.evaluation import (
 from detectron2.modeling import GeneralizedRCNNWithTTA
 
 from fcos import add_fcos_config
+from centernet import add_centernet_config
 from dataset import register_dataset
 
 
@@ -233,6 +234,7 @@ def setup(args):
         
     
     add_fcos_config(cfg)
+    add_centernet_config(cfg)
     #==========
     
     cfg.merge_from_file(args.config_file)
