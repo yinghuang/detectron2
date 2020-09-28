@@ -86,6 +86,7 @@ python demo/demo.py ^
 改写版本的pycocotools看起来是不会再更新了，因此能安装原版pycocotools的话最好
 安装教程[参考](https://www.cnblogs.com/wildgoose/p/12905200.html)
 本仓库已经加入了这个包，并且修改过，可以跳过第0、1步。  
+
 0. git clone https://github.com/philferriere/cocoapi  
 1. 修改cocoeval.py  
 2. 安装pip install cython  
