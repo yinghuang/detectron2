@@ -69,20 +69,22 @@ python train_net.py ^
 
 1.写好yaml配置文件
 
+2.通过`dataset/voc2coco.py`来制作coco标注文件(.json)
+
 2.执行
 ```
 python train_net.py ^
 --config-file configs/fcos_R_50_FPN_develop.yaml ^
---dataset_dir xxx ^
---dataset_settxt xxx.txt ^
---class_names xxx ^
+--ann_file_train xxx.json ^
+--image_dir_train xxx ^
 --num-gpus xxx
 ```
 
 ### Notes
 
 1. 暂不支持cfg.MODEL.FCOS.NORM_SYNC=True, 需要判断当前是否处于多GPU训练
-2. 
+2. 如果要多GPU训练, cfg.MODEL.FCOS.IN_FEATURES 确保IN_FEATURES包括["p3", "p4", "p5", "p6", "p7"], 缺少一个就会报错 
+"Expected to have finished reduction in the prior iteration before starting a new one"
 
 ### Detectron2 理解
 1. `cfg.MIN_SIZE_TRAIN`和`cfg.MAX_SIZE_TRAIN`, 可以实现多尺度训练. 对batch中每张图片都进行keep ratio random resize, 

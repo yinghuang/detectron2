@@ -37,7 +37,7 @@ from detectron2.modeling import GeneralizedRCNNWithTTA
 
 from fcos import add_fcos_config
 from centernet import add_centernet_config
-from dataset import register_dataset
+from dataset.dataset import register_dataset
 
 
 def default_argument_parser(epilog=None):
@@ -66,13 +66,12 @@ Run on multiple machines:
     )
     # add for custom
     #==========
-    parser.add_argument('--dataset_dir', type=str, default="")
-    parser.add_argument('--dataset_settxt', type=str, default="train.txt")
-    parser.add_argument('--class_names', type=str, default="") 
-    parser.add_argument('--dataset_register_type', type=str, default="filename")  # 数据集文件路径集合.txt中使用的是absolute路径还是文件名
-    
-    parser.add_argument('--dataset_dir_val', type=str, default="")
-    parser.add_argument('--dataset_settxt_val', type=str, default="val.txt")
+    parser.add_argument('--name_train', type=str, default="dataset_train")
+    parser.add_argument('--ann_file_train', type=str, default=None)
+    parser.add_argument('--image_dir_train', type=str, default=None)
+    parser.add_argument('--name_val', type=str, default="dataset_val")
+    parser.add_argument('--ann_file_val', type=str, default=None)
+    parser.add_argument('--image_dir_val', type=str, default=None)
     #==========
     
     parser.add_argument("--config-file", default="", metavar="FILE", help="path to config file")
@@ -182,25 +181,25 @@ class Trainer(DefaultTrainer):
         res = OrderedDict({k + "_TTA": v for k, v in res.items()})
         return res
 
-#    @classmethod # 自定义augmentation, https://detectron2.readthedocs.io/tutorials/data_loading.html#write-a-custom-dataloader
-#    def build_train_loader(cls, cfg):
-#        """
-#        Returns:
-#            iterable
-#
-#        It now calls :func:`detectron2.data.build_detection_train_loader`.
-#        Overwrite it if you'd like a different data loader.
-#        """
-#        logger = logging.getLogger("detectron2.trainer.build_train_loader")
-#        mapper = DatasetMapper(cfg, is_train=True)
-#        # 默认有 T.ResizeShortestEdge(min_size, max_size, sample_style)
-#        # 并且is_train=True时, 有augmentation.append(T.RandomFlip())
-#        mapper.augmentations = [mapper.augmentations[0]]
-#        mapper.augmentations.append(T.RandomFlip(prob=0.5, horizontal=False, vertical=True))
-#        mapper.augmentations.append(T.RandomFlip(prob=0.5, horizontal=True, vertical=False))
-#        logger.info("Augmentations used in training changed to:{}\n".format(mapper.augmentations))
-#        
-#        return build_detection_train_loader(cfg, mapper=mapper)
+    @classmethod # 自定义augmentation, https://detectron2.readthedocs.io/tutorials/data_loading.html#write-a-custom-dataloader
+    def build_train_loader(cls, cfg):
+        """
+        Returns:
+            iterable
+
+        It now calls :func:`detectron2.data.build_detection_train_loader`.
+        Overwrite it if you'd like a different data loader.
+        """
+        logger = logging.getLogger("detectron2.trainer.build_train_loader")
+        mapper = DatasetMapper(cfg, is_train=True)
+        # 默认有 T.ResizeShortestEdge(min_size, max_size, sample_style)
+        # 并且is_train=True时, 有augmentation.append(T.RandomFlip())
+        if not "no90" in cfg.OUTPUT_DIR:
+            mapper.augmentations.append(T.RandomRotation(angle=[0, 90], sample_style="choice"))
+        
+        logger.info("Augmentations used in training changed to:{}\n".format(mapper.augmentations))
+        
+        return build_detection_train_loader(cfg, mapper=mapper)
 
 def setup(args):
     """
@@ -209,28 +208,11 @@ def setup(args):
     cfg = get_cfg()
     
     # add for custom
-    evaluator_type = "coco"
     #==========
-    if len(args.dataset_dir)>0:
-        ## register dataset
-        class_names = tuple(args.class_names.replace(" ","").split(","))
-        dataset_name_train = "my_custom_train"
-        absolute_path = args.dataset_register_type == "absolute"
-        register_dataset(dataset_name_train,
-                         args.dataset_dir,
-                         args.dataset_settxt,
-                         class_names,
-                         absolute_path,
-                         evaluator_type)
-    if len(args.dataset_dir_val)>0: # 有验证集
-        dataset_name_val = "my_custom_val"
-        register_dataset(dataset_name_val,
-                         args.dataset_dir_val,
-                         args.dataset_settxt_val,
-                         class_names,
-                         absolute_path,
-                         evaluator_type)
-            
+    if args.ann_file_train != None:
+        register_dataset(args.name_train, args.ann_file_train, args.image_dir_train)
+    if args.ann_file_val != None:
+        register_dataset(args.name_val, args.ann_file_val, args.image_dir_val)
         
     
     add_fcos_config(cfg)
@@ -242,12 +224,10 @@ def setup(args):
     
     # add for custom
     #==========
-    if len(args.dataset_dir)>0:
-        ## 使用自定义数据集训练
-        cfg.DATASETS.TRAIN = (dataset_name_train,)
-    if len(args.dataset_dir_val)>0:
-        ## 使用自定义数据集测试
-        cfg.DATASETS.TEST = (dataset_name_val,)
+    ## 使用自定义数据集训练
+    cfg.DATASETS.TRAIN = (args.name_train,)
+    ## 使用自定义数据集测试
+    cfg.DATASETS.TEST = (args.name_val,)
     
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     shutil.copy(args.config_file, "{}/{}".format(cfg.OUTPUT_DIR, "config_my.yaml")) # 保存训练参数

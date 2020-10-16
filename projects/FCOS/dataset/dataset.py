@@ -2,7 +2,6 @@ import os
 import logging
 import pickle
 from datetime import datetime
-import numpy as np
 
 import xml.etree.ElementTree as ET
 from multiprocessing import Manager
@@ -11,6 +10,7 @@ from multiprocessing import Pool
 from fvcore.common.file_io import PathManager
 from detectron2.structures import BoxMode
 from detectron2.data import DatasetCatalog, MetadataCatalog
+from detectron2.data.datasets import register_coco_instances
 
 logger = logging.getLogger("dataset.py")
 
@@ -96,7 +96,8 @@ def parse_batch(args):
         bbox[1] -= 1.0
         if cls not in class_names: # hb测试集类别名字比较乱("001"?), 但是只有一个
             cls = class_names[0]
-            logger.info("xml file: {}, class {} not in class_names, change to class_names[0]: {}".format(anno_file, cls, class_names[0]))
+            logger.info("xml file: {}, class {} not in class_names, change to class_names[0]: {}".format(
+                    anno_file, cls, class_names[0]))
         instances.append(
             {"category_id": class_names.index(cls), "bbox": bbox, "bbox_mode": BoxMode.XYXY_ABS}
         )
@@ -200,18 +201,28 @@ def load_instances(dirname, settxt, class_names, absolute=False, threads=10, poo
     return dicts
 
 
-def register_dataset(name, dirname, settxt, class_names, absolute, evaluator_type, threads=10, pool_batch_size=1000):
+def register_dataset_old(name, dirname, settxt, class_names, absolute, evaluator_type, threads=10, pool_batch_size=1000):
     """
     Args:
         name (str): 数据集名称
         dirname (str): 数据集所在目录
         settxt (str): 数据集目录下的文件名集合, 一行一个文件名
+        class_names (str): 类别名文件, 一行一个类别名
         threads (int): 多线程个数
         pool_batch_size (int): 每个线程每次处理图片个数
     """
+    
+    with open(os.path.join(dirname, class_names)) as f:
+        class_names = f.readlines()
+        
+    class_names = [name.replace("\n", "") for name in class_names if name!="\n"]
+    
     DatasetCatalog.register(name, lambda: load_instances(dirname, settxt, class_names, absolute, threads, pool_batch_size))
     MetadataCatalog.get(name).set(
         thing_classes=list(class_names),
         dirname=dirname,
         evaluator_type=evaluator_type
     )
+
+def register_dataset(name, ann_file, image_dir):
+    register_coco_instances(name, {}, ann_file, image_dir)

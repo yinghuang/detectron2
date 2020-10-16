@@ -130,7 +130,7 @@ class Shift2BoxTransform(object):
         assert isinstance(boxes, torch.Tensor), type(boxes)
 
         deltas = torch.cat((shifts - boxes[..., :2], boxes[..., 2:] - shifts),
-                           dim=-1) * shifts.new_tensor(self.weights)
+                           dim=-1) * (shifts.new_tensor(self.weights))
         return deltas
 
     def apply_deltas(self, deltas, shifts):
@@ -149,7 +149,7 @@ class Shift2BoxTransform(object):
         if deltas.numel() == 0:
             return torch.empty_like(deltas)
 
-        deltas = deltas.view(deltas.size()[:-1] + (-1, 4)) / shifts.new_tensor(self.weights)
+        deltas = deltas.view(deltas.size()[:-1] + (-1, 4)) / (shifts.new_tensor(self.weights))
         boxes = torch.cat((shifts.unsqueeze(-2) - deltas[..., :2],
                            shifts.unsqueeze(-2) + deltas[..., 2:]),
                           dim=-1).view(deltas.size()[:-2] + (-1, ))
@@ -178,7 +178,7 @@ class FCOS(nn.Module):
     def __init__(self, cfg):
         super().__init__()
 
-        self.device = torch.device(cfg.MODEL.DEVICE)
+#        self.device = torch.device(cfg.MODEL.DEVICE)
 
         # fmt: off
         self.num_classes = cfg.MODEL.FCOS.NUM_CLASSES
@@ -196,8 +196,7 @@ class FCOS(nn.Module):
         self.max_detections_per_image = cfg.TEST.DETECTIONS_PER_IMAGE
         # fmt: on
 
-        self.backbone = build_backbone(
-            cfg, input_shape=ShapeSpec(channels=len(cfg.MODEL.PIXEL_MEAN)))
+        self.backbone = build_backbone(cfg)
 
         backbone_shape = self.backbone.output_shape()
         feature_shapes = [backbone_shape[f] for f in self.in_features]
@@ -211,14 +210,21 @@ class FCOS(nn.Module):
         # 分配box到特定level的feature map上
         # 限制回归范围.  mi-1<max(delta)<mi不满足的, 不进行box reg
         self.object_sizes_of_interest = cfg.MODEL.FCOS.OBJECT_SIZES_OF_INTEREST
-        self.norm_sync = cfg.MODEL.FCOS.NORM_SYNC
+#        self.norm_sync = cfg.MODEL.FCOS.NORM_SYNC
 
-        pixel_mean = torch.Tensor(cfg.MODEL.PIXEL_MEAN).to(self.device).view(
-            3, 1, 1)
-        pixel_std = torch.Tensor(cfg.MODEL.PIXEL_STD).to(self.device).view(
-            3, 1, 1)
-        self.normalizer = lambda x: (x - pixel_mean) / pixel_std
-        self.to(self.device)
+        self.register_buffer("pixel_mean", torch.Tensor(cfg.MODEL.PIXEL_MEAN).view(-1, 1, 1))
+        self.register_buffer("pixel_std", torch.Tensor(cfg.MODEL.PIXEL_STD).view(-1, 1, 1))
+        
+#        pixel_mean = torch.Tensor(cfg.MODEL.PIXEL_MEAN).to(self.device).view(
+#            3, 1, 1)
+#        pixel_std = torch.Tensor(cfg.MODEL.PIXEL_STD).to(self.device).view(
+#            3, 1, 1)
+#        self.normalizer = lambda x: (x - self.pixel_mean) / self.pixel_std
+#        self.to(self.device)
+    
+    @property
+    def device(self):
+        return self.pixel_mean.device
     
     def forward(self, batched_inputs):
         """
@@ -238,30 +244,32 @@ class FCOS(nn.Module):
         # Convert imgs have different shape in batched_inputs
         # to that have same shape and into one tensor: [n, c, h, w]
         images = self.preprocess_image(batched_inputs)
-        if "instances" in batched_inputs[0]:
-            gt_instances = [
-                x["instances"].to(self.device) for x in batched_inputs
-            ]
-        elif "targets" in batched_inputs[0]:
-            log_first_n(
-                logging.WARN,
-                "'targets' in the model inputs is now renamed to 'instances'!",
-                n=10)
-            gt_instances = [
-                x["targets"].to(self.device) for x in batched_inputs
-            ]
-        else:
-            gt_instances = None
-        
         # images.tensor: [n, c, h, w]
         features = self.backbone(images.tensor)
         features = [features[f] for f in self.in_features]
+        
         box_cls, box_delta, box_center = self.head(features)
         shifts = self.shift_generator(features) # feature map中像素点相对于原图的坐标
-
+        
         if self.training:
+            if "instances" in batched_inputs[0]:
+                gt_instances = [
+                    x["instances"].to(self.device) for x in batched_inputs
+                ]
+            elif "targets" in batched_inputs[0]:
+                log_first_n(
+                    logging.WARN,
+                    "'targets' in the model inputs is now renamed to 'instances'!",
+                    n=10)
+                gt_instances = [
+                    x["targets"].to(self.device) for x in batched_inputs
+                ]
+            else:
+                gt_instances = None
+            
             gt_classes, gt_shifts_reg_deltas, gt_centerness = self.get_ground_truth(
                 shifts, gt_instances)
+            
             return self.losses(gt_classes, gt_shifts_reg_deltas, gt_centerness,
                                box_cls, box_delta, box_center)
         else:
@@ -311,12 +319,12 @@ class FCOS(nn.Module):
         gt_classes_target[foreground_idxs, gt_classes[foreground_idxs]] = 1
 
         # 分布式 / 还要判断是否开启多gpu
-        if self.norm_sync and dist.is_available():
-            dist.all_reduce(num_foreground)
-            num_foreground /= dist.get_world_size()
-
-            dist.all_reduce(acc_centerness_num)
-            acc_centerness_num /= dist.get_world_size()
+#        if self.norm_sync and dist.is_available():
+#            dist.all_reduce(num_foreground)
+#            num_foreground /= dist.get_world_size()
+#
+#            dist.all_reduce(acc_centerness_num)
+#            acc_centerness_num /= dist.get_world_size()
 
         # logits loss
         loss_cls = sigmoid_focal_loss_jit(
@@ -442,7 +450,7 @@ class FCOS(nn.Module):
                 gt_classes_i[positions_min_area == math.inf] = self.num_classes
             else:
                 gt_classes_i = torch.zeros_like(
-                    gt_matched_idxs) + self.num_classes
+                    gt_matched_idxs, device=self.device) + self.num_classes
 
             # ground truth centerness
             left_right = gt_shifts_reg_deltas_i[:, [0, 2]]
@@ -563,21 +571,33 @@ class FCOS(nn.Module):
         result.pred_classes = class_idxs_all[keep]
         return result
 
+
     def preprocess_image(self, batched_inputs):
         """
         Normalize, pad and batch the input images.
         """
         images = [x["image"].to(self.device) for x in batched_inputs]
-        images = [self.normalizer(x) for x in images]
-        # different shape(e.g. [c, 480, 480], [c, 512, 512]) in images 
-        # to same shape [n, c, max_size_h, max_size_w] (e.g. [2, c, 512, 512])
-        # and max_size_h and max_size_w should be divided with no remainde by size_divisibility(整除)
-        # e.g. if 600%32!==0, should be 608
-        # If `size_divisibility > 0`, add padding to ensure
-        # the common height and width is divisible by `size_divisibility`.
-        images = ImageList.from_tensors(images,
-                                        self.backbone.size_divisibility)
+        images = [(x - self.pixel_mean) / self.pixel_std for x in images]
+        images = ImageList.from_tensors(images, self.backbone.size_divisibility)
         return images
+    
+#    def preprocess_image(self, batched_inputs):
+#        """
+#        Normalize, pad and batch the input images.
+#        """
+#        
+#        images = [x["image"].to(self.device) for x in batched_inputs]
+#        images = [(x - self.pixel_mean) / self.pixel_std for x in images]
+#        
+##        images = [self.normalizer(x) for x in images]
+#        # different shape(e.g. [c, 480, 480], [c, 512, 512]) in images 
+#        # to same shape [n, c, max_size_h, max_size_w] (e.g. [2, c, 512, 512])
+#        # and max_size_h and max_size_w should be divided with no remainde by size_divisibility(整除)
+#        # e.g. if 600%32!==0, should be 608
+#        # If `size_divisibility > 0`, add padding to ensure
+#        # the common height and width is divisible by `size_divisibility`.
+#        images = ImageList.from_tensors(images, self.backbone.size_divisibility)
+#        return images
 
 
 class FCOSHead(nn.Module):
