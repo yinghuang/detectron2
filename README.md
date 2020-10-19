@@ -27,8 +27,8 @@ See [INSTALL_win10.md](INSTALL_win10.md).
 
 ## Highlights
 
-1. Support [FCOS](https://arxiv.org/abs/1904.01355). [For more](projects/FCOS/fcos)
-2. Support [Centernet](https://arxiv.org/abs/1904.07850) under building... [For more](projects/FCOS/centernet) 
+1. Support [FCOS](https://arxiv.org/abs/1904.01355). [For more](projects/My/fcos)
+2. Support [Centernet](https://arxiv.org/abs/1904.07850) under building... [For more](projects/My/centernet) 
 
 ## Future
 1. Add support of tfrecord for dataloader.
