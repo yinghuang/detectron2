@@ -14,7 +14,7 @@
 
 **0. 安装NVIDIA显卡驱动, 安装CUDA(因为底层需要用到c++编译deformable conv层)**  
   
-  **注意:**:由于后面用conda安装pytorch会安装conda的cudatoolk包, 需要确保cudatoolk和本地的CUDA版本一致
+  **注意:**:由于后面用conda安装pytorch会安装conda的cudatoolkit包, 需要确保cudatoolkit和这里安装的本地CUDA版本一致(比如下面装的是CUDA10.1, 这里也要装CUDA10.1)
   
   
 **1. 根据NVIDIA显卡驱动确定自己可以安装的CUDA版本以及pytorch版本**  
@@ -85,7 +85,7 @@ python demo/demo.py ^
 **10. (可选)安装pycocotools**  
 改写版本的pycocotools看起来是不会再更新了，因此能安装原版pycocotools的话最好
 安装教程[参考](https://www.cnblogs.com/wildgoose/p/12905200.html)
-本仓库已经加入了这个包，并且修改过，可以跳过第0、1步。  
+本仓库已经加入了这个包，并且修改过，可以跳过第0、1步(见[cocoapi](cocoapi))。  
 
 0. git clone https://github.com/philferriere/cocoapi  
 1. 修改cocoeval.py  

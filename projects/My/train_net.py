@@ -10,6 +10,7 @@ import os
 from collections import OrderedDict
 import shutil
 import torch
+import yaml
 
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
@@ -40,6 +41,31 @@ from centernet import add_centernet_config
 from dataset.dataset import register_dataset
 
 
+def load_yaml(filename, allow_unsafe=True):
+    """
+    detectron2读取cfg会删除__BASE__节点
+    为了读取到这个节点, 额外再读取一次
+    """
+    from fvcore.common.file_io import PathManager
+    with PathManager.open(filename, "r") as f:
+        try:
+            cfg = yaml.safe_load(f)
+        except yaml.constructor.ConstructorError:
+            if not allow_unsafe:
+                raise
+            logger = logging.getLogger(__name__)
+            logger.warning(
+                "Loading config {} with yaml.unsafe_load. Your machine may "
+                "be at risk if the file contains malicious content.".format(
+                    filename
+                )
+            )
+            f.close()
+            with open(filename, "r") as f:
+                cfg = yaml.unsafe_load(f)  # pyre-ignore
+    return cfg
+              
+      
 def default_argument_parser(epilog=None):
     """
     Create a parser with some common arguments used by detectron2 users.
@@ -230,7 +256,18 @@ def setup(args):
     cfg.DATASETS.TEST = (args.name_val,)
     
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
-    shutil.copy(args.config_file, "{}/{}".format(cfg.OUTPUT_DIR, "config_my.yaml")) # 保存训练参数
+    shutil.copy(args.config_file, 
+                "{}/{}".format(cfg.OUTPUT_DIR, "config_my.yaml")) # 保存训练参数
+    
+    _BASE_ = load_yaml(args.config_file)["_BASE_"]
+    cfg_base_path = os.path.join(os.path.dirname(args.config_file),
+                                 _BASE_)
+    shutil.copy(cfg_base_path, 
+                "{}/{}".format(
+                        cfg.OUTPUT_DIR,
+                        os.path.basename(cfg_base_path)
+                )) # 保存训练参数 for base yaml
+    
     #==========
     
     cfg.freeze()
